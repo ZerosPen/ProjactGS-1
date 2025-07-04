@@ -1,0 +1,69 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
+
+public class PlayerMovement : Player
+{
+    [Header("Movement")]
+    public float speedMovement;
+    public float maxSpeedMovement;
+    private float direction;
+    public float dashForce;
+    [Header("Jump")]
+    public float jumpForce;
+    public int jumpCount;
+    public int maxJump;
+    public Transform groundCheck;
+    public float radiusGroundCheck;
+    public LayerMask groundMask;
+    
+    [Header("KeyBind")]
+    public KeyCode movementLeft = KeyCode.A;
+    public KeyCode movementRight = KeyCode.D;
+    public KeyCode Jump = KeyCode.Space;
+    public KeyCode dash = KeyCode.LeftShift;
+
+    private Rigidbody2D rb;
+    private bool isGroundCheck;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        direction = Input.GetKey(movementRight) ? 1f :
+                    Input.GetKey(movementLeft) ? -1f : 0f;
+        isGroundCheck = Physics2D.OverlapCircle(groundCheck.position, radiusGroundCheck, groundMask);
+
+        if (isGroundCheck)
+        {
+            jumpCount = maxJump;
+        }
+        if (Input.GetKeyDown(Jump) && isGroundCheck)
+        {
+            rb.AddForce(Vector2.up * jumpForce);
+        }
+        else if (Input.GetKeyDown(Jump) && jumpCount > 0)
+        {
+            rb.AddForce(Vector2.up * jumpForce);
+            jumpCount--;
+        }
+
+        if (Input.GetKeyDown(dash) && isGroundCheck)
+        {
+            rb.AddForce(Vector2.right * direction * dashForce);
+        }
+
+    }
+
+    private void FixedUpdate()
+    {
+        if (Math.Abs(rb.velocity.x) < maxSpeedMovement) {
+            rb.AddForce(Vector2.right * direction * speedMovement);
+        }
+    }
+}
