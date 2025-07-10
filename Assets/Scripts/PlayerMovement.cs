@@ -10,7 +10,13 @@ public class PlayerMovement : Player
     public float speedMovement;
     public float maxSpeedMovement;
     private float direction;
+    [Header("Dash")]
+    private bool canDash = true;
+    private bool isDashing;
     public float dashForce;
+    private float dashTime = 0.2f;
+    private float coolDownDash = 1f;
+
     [Header("Jump")]
     public float jumpForce;
     public int jumpCount;
@@ -39,6 +45,11 @@ public class PlayerMovement : Player
                     Input.GetKey(movementLeft) ? -1f : 0f;
         isGroundCheck = Physics2D.OverlapCircle(groundCheck.position, radiusGroundCheck, groundMask);
 
+        if (isDashing)
+        {
+            return;
+        }
+
         if (isGroundCheck)
         {
             jumpCount = maxJump;
@@ -53,17 +64,33 @@ public class PlayerMovement : Player
             jumpCount--;
         }
 
-        if (Input.GetKeyDown(dash) && isGroundCheck)
-        {
+        if (Input.GetKeyDown(dash) && canDash)
+        { 
+            isDashing = true;
             rb.AddForce(Vector2.right * direction * dashForce);
+            StartCoroutine(CoolDownDash());
         }
-
+        Debug.Log("Can dash = " + canDash);
     }
 
     private void FixedUpdate()
     {
+        if (isDashing)
+        {
+            return;
+        }
         if (Math.Abs(rb.velocity.x) < maxSpeedMovement) {
             rb.AddForce(Vector2.right * direction * speedMovement);
         }
+    }
+
+    private IEnumerator CoolDownDash()
+    {
+        canDash = false;
+        yield return new WaitForSeconds(dashTime);
+        rb.gravityScale = 1f;
+        isDashing = false;
+        yield return new WaitForSeconds(coolDownDash);
+        canDash = true;
     }
 }
