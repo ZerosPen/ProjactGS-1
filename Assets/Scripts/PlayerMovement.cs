@@ -9,7 +9,7 @@ public class PlayerMovement : Player
     [Header("Movement")]
     public float speedMovement;
     public float maxSpeedMovement;
-    private float direction;
+    public float direction;
     [Header("Dash")]
     private bool canDash = true;
     private bool isDashing;
@@ -70,7 +70,7 @@ public class PlayerMovement : Player
             rb.AddForce(Vector2.right * direction * dashForce);
             StartCoroutine(CoolDownDash());
         }
-        Debug.Log("Can dash = " + canDash);
+/*        Debug.Log("Can dash = " + canDash);*/
     }
 
     private void FixedUpdate()
