@@ -8,6 +8,8 @@ public class FireBall : MonoBehaviour
     public float damage;
     public float speed;
     public float direction;
+    public GameObject explosionVFX;
+    private GameObject explosionActive;
 
     private Rigidbody2D rb;
 
@@ -19,11 +21,18 @@ public class FireBall : MonoBehaviour
     private void Update()
     {
         rb.velocity = new Vector2(direction * speed, 0f) * Time.deltaTime;
-        Debug.Log("speed" + rb.velocity);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.CompareTag("enemy"))
+        {
+            GameObject ExplosionVFX = Instantiate(explosionVFX, transform.position, Quaternion.identity);
+            float duration = ExplosionVFX.GetComponent<ParticleSystem>().main.duration;
+            Destroy(ExplosionVFX, duration);
 
+            gameObject.SetActive(false);
+            Debug.Log("Enemy hit " + damage);
+        }
     }
 }

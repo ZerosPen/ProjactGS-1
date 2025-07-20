@@ -32,11 +32,13 @@ public class PlayerMovement : Player
     public KeyCode dash = KeyCode.LeftShift;
 
     private Rigidbody2D rb;
+    private TrailRenderer tr;
     private bool isGroundCheck;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        tr = GetComponent<TrailRenderer>();
     }
 
     private void Update()
@@ -53,14 +55,17 @@ public class PlayerMovement : Player
         if (isGroundCheck)
         {
             jumpCount = maxJump;
+            tr.enabled = false;
         }
         if (Input.GetKeyDown(Jump) && isGroundCheck)
         {
             rb.AddForce(Vector2.up * jumpForce);
+            tr.enabled = true;
         }
         else if (Input.GetKeyDown(Jump) && jumpCount > 0)
         {
             rb.AddForce(Vector2.up * jumpForce);
+            tr.enabled = true;
             jumpCount--;
         }
 
@@ -89,8 +94,10 @@ public class PlayerMovement : Player
         canDash = false;
         yield return new WaitForSeconds(dashTime);
         rb.gravityScale = 1f;
+        tr.enabled = true;
         isDashing = false;
         yield return new WaitForSeconds(coolDownDash);
+        tr.enabled = false;
         canDash = true;
     }
 }

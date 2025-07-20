@@ -75,17 +75,7 @@ public class PlayerCombat : Player
         }
 
         GameObject newFireball = Instantiate(fireBallPrefabs, transform.position, Quaternion.identity);
-        FireBall fb = newFireball.GetComponent<FireBall>();
-
-        if (fb != null)
-        {
-            fb.direction = lastDirection;
-        }
-        else
-        {
-            Debug.LogError("FireBall component not found on prefab!");
-        }
-
+        newFireball.GetComponent<FireBall>().direction = lastDirection;
         fireballContainer.Add(newFireball);
     }
 
