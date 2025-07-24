@@ -25,12 +25,25 @@ public class FireBall : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("enemy"))
+        if (collision.CompareTag("wall"))
         {
             GameObject ExplosionVFX = Instantiate(explosionVFX, transform.position, Quaternion.identity);
             float duration = ExplosionVFX.GetComponent<ParticleSystem>().main.duration;
-            Destroy(ExplosionVFX, duration);
 
+            Destroy(ExplosionVFX, duration);
+            gameObject.SetActive(false);
+            return;
+        }
+
+        Idamagetable damageTable = collision.GetComponent<Idamagetable>();
+        if (damageTable == null || collision.CompareTag("player")) return;
+        {
+            Debug.Log(collision.name);
+            GameObject ExplosionVFX = Instantiate(explosionVFX, transform.position, Quaternion.identity);
+            float duration = ExplosionVFX.GetComponent<ParticleSystem>().main.duration;
+
+            damageTable.TakeDamage(damage);
+            Destroy(ExplosionVFX, duration);
             gameObject.SetActive(false);
             Debug.Log("Enemy hit " + damage);
         }

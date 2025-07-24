@@ -18,6 +18,7 @@ public class PlayerMovement : Player
     private float coolDownDash = 1f;
 
     [Header("Jump")]
+    private bool isJumping;
     public float jumpForce;
     public int jumpCount;
     public int maxJump;
@@ -55,17 +56,17 @@ public class PlayerMovement : Player
         if (isGroundCheck)
         {
             jumpCount = maxJump;
-            tr.enabled = false;
+            isJumping = false;
         }
         if (Input.GetKeyDown(Jump) && isGroundCheck)
         {
             rb.AddForce(Vector2.up * jumpForce);
-            tr.enabled = true;
+            isJumping = true;
         }
         else if (Input.GetKeyDown(Jump) && jumpCount > 0)
         {
             rb.AddForce(Vector2.up * jumpForce);
-            tr.enabled = true;
+            isJumping = true;
             jumpCount--;
         }
 
@@ -74,6 +75,11 @@ public class PlayerMovement : Player
             isDashing = true;
             rb.AddForce(Vector2.right * direction * dashForce);
             StartCoroutine(CoolDownDash());
+        }
+
+        if (isDashing || isJumping)
+        {
+            tr.enabled = true;
         }
 /*        Debug.Log("Can dash = " + canDash);*/
     }

@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 659303b8bfb6e004ba9c4658ce7284a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 250
+  damage: 50
   speed: 3000
   direction: 1
   explosionVFX: {fileID: 5641988409107824857, guid: f255d9c924bf96e439edbdacfdae8f6a, type: 3}
