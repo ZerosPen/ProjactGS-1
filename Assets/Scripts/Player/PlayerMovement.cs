@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEngine.InputSystem;
 using UnityEngine;
+using UnityEditor.Rendering.LookDev;
 
 public class PlayerMovement : Player
 {
@@ -10,6 +12,8 @@ public class PlayerMovement : Player
     public float speedMovement;
     public float maxSpeedMovement;
     public float direction;
+    public Vector2 movementInput;
+
     [Header("Dash")]
     private bool canDash = true;
     private bool isDashing;
