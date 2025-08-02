@@ -90,7 +90,7 @@ public class PlayerMovement : Player
         {
             return;
         }
-        if (Math.Abs(rb.velocity.x) < maxSpeedMovement) {
+        if (Mathf.Abs(rb.velocity.x) < maxSpeedMovement) {
             rb.AddForce(Vector2.right * direction * speedMovement);
         }
     }
