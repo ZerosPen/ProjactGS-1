@@ -14,7 +14,7 @@ public class Enemy : Entity, Idamagetable
     [Header("References")]
     public GameObject PlayerPos;
     public GameObject FireballPos;
-    public Image healthBar;
+    public Slider healthBar;
     private FloatingStatus statusBar;
     public float healthPoint { get; set; }
     public float distancePlayer;
@@ -22,15 +22,13 @@ public class Enemy : Entity, Idamagetable
 
     private void Start()
     {
-        isRoaming = true;
+        //isRoaming = true;
         healthPoint = maxHealthPoint;
-        statusBar = GetComponentInChildren<FloatingStatus>();
     }
 
     public void TakeDamage (float damage)
     {
         healthPoint -= damage;
-        statusBar.UpdateStatus(healthPoint, maxHealthPoint);
         if (healthPoint <= 0)
         {
             gameObject.SetActive(false);
@@ -39,8 +37,8 @@ public class Enemy : Entity, Idamagetable
 
     public void Update ()
     {
-        healthBar.fillAmount = healthPoint / maxHealthPoint;   
+        healthBar.value = healthPoint / maxHealthPoint;
         distancePlayer = (transform.position.x - PlayerPos.transform.position.x);
-        distanceTarget = (transform.position.x - FireballPos.transform.position.x);
+        //distanceTarget = (transform.position.x - FireballPos.transform.position.x);
     }
 }

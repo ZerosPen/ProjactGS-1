@@ -112,6 +112,34 @@ public partial class @Controller: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Attack"",
+            ""id"": ""b47c60e6-061a-455f-a64f-cdd95e0527d1"",
+            ""actions"": [
+                {
+                    ""name"": ""FireBall"",
+                    ""type"": ""Button"",
+                    ""id"": ""64610dc7-dc94-4935-9c3f-56679b8cc2db"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""16104f7d-2275-41b8-9efb-5d90e829afc1"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KeyBoard & mosue"",
+                    ""action"": ""FireBall"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -149,11 +177,15 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         m_Movement_Movement = m_Movement.FindAction("Movement", throwIfNotFound: true);
         m_Movement_Dash = m_Movement.FindAction("Dash", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+        // Attack
+        m_Attack = asset.FindActionMap("Attack", throwIfNotFound: true);
+        m_Attack_FireBall = m_Attack.FindAction("FireBall", throwIfNotFound: true);
     }
 
     ~@Controller()
     {
         UnityEngine.Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, Controller.Movement.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Attack.enabled, "This will cause a leak and performance issues, Controller.Attack.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -273,6 +305,52 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // Attack
+    private readonly InputActionMap m_Attack;
+    private List<IAttackActions> m_AttackActionsCallbackInterfaces = new List<IAttackActions>();
+    private readonly InputAction m_Attack_FireBall;
+    public struct AttackActions
+    {
+        private @Controller m_Wrapper;
+        public AttackActions(@Controller wrapper) { m_Wrapper = wrapper; }
+        public InputAction @FireBall => m_Wrapper.m_Attack_FireBall;
+        public InputActionMap Get() { return m_Wrapper.m_Attack; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(AttackActions set) { return set.Get(); }
+        public void AddCallbacks(IAttackActions instance)
+        {
+            if (instance == null || m_Wrapper.m_AttackActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_AttackActionsCallbackInterfaces.Add(instance);
+            @FireBall.started += instance.OnFireBall;
+            @FireBall.performed += instance.OnFireBall;
+            @FireBall.canceled += instance.OnFireBall;
+        }
+
+        private void UnregisterCallbacks(IAttackActions instance)
+        {
+            @FireBall.started -= instance.OnFireBall;
+            @FireBall.performed -= instance.OnFireBall;
+            @FireBall.canceled -= instance.OnFireBall;
+        }
+
+        public void RemoveCallbacks(IAttackActions instance)
+        {
+            if (m_Wrapper.m_AttackActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IAttackActions instance)
+        {
+            foreach (var item in m_Wrapper.m_AttackActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_AttackActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public AttackActions @Attack => new AttackActions(this);
     private int m_GamePadSchemeIndex = -1;
     public InputControlScheme GamePadScheme
     {
@@ -296,5 +374,9 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IAttackActions
+    {
+        void OnFireBall(InputAction.CallbackContext context);
     }
 }

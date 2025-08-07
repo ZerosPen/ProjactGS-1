@@ -90,6 +90,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Attack",
+            "id": "b47c60e6-061a-455f-a64f-cdd95e0527d1",
+            "actions": [
+                {
+                    "name": "FireBall",
+                    "type": "Button",
+                    "id": "64610dc7-dc94-4935-9c3f-56679b8cc2db",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "16104f7d-2275-41b8-9efb-5d90e829afc1",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyBoard & mosue",
+                    "action": "FireBall",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

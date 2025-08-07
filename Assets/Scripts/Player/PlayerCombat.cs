@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCombat : Player
 {
@@ -13,11 +14,11 @@ public class PlayerCombat : Player
     public KeyCode attackKey = KeyCode.R;
 
     public GameObject fireBallPrefabs;
-    private PlayerMovement movement;
+    private NewPlayerMove movement;
 
     private void Start()
     {
-        movement = GetComponent<PlayerMovement>();
+        movement = GetComponent<NewPlayerMove>();
 
         if (fireBallPrefabs == null)
             Debug.LogError("FireBall prefab not assigned!");
@@ -28,10 +29,9 @@ public class PlayerCombat : Player
 
     private void Update()
     {
-        float direction = movement.direction;
-        if (direction != 0)
+        if (movement.movementInput.x != 0)
         {
-            lastDirection = direction;
+            lastDirection = movement.movementInput.x;
         }
 
         if (currCoolDown > 0)
@@ -47,15 +47,17 @@ public class PlayerCombat : Player
                 activeChargeVFX.transform.SetParent(transform);
             }
         }
+    }
 
-        if (Input.GetKeyUp(attackKey) && currCoolDown <= 0)
+    public void FireBalls(InputAction.CallbackContext contex)
+    {
+        if (contex.canceled && currCoolDown <= 0)
         {
             if (activeChargeVFX != null)
             {
                 Destroy(activeChargeVFX);
                 activeChargeVFX = null;
             }
-
             SpawnFireBall();
             currCoolDown = coolDownTime;
         }

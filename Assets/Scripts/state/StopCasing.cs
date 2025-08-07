@@ -16,8 +16,8 @@ public class StopCasing : State
     // Update is called once per frame
     void Update()
     {
-        enemyScript.isChasing = enemyMovement.isChasing =  false;
         enemyScript.isRoaming = enemyMovement.isRoaming = true;
+        enemyScript.isChasing = enemyMovement.isChasing = false;
         enemyMovement.StopMove();
         enemyMovement.SetNewTargetPos();
     }

@@ -10,6 +10,7 @@ public class NewPlayerMove : Player
     public Vector2 movementInput;
     private Rigidbody2D rb;
     public float speed;
+    private TrailRenderer tr;
 
 
     [Header("Dash")]
@@ -31,6 +32,7 @@ public class NewPlayerMove : Player
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        tr = GetComponent<TrailRenderer>();
     }
 
     private void Update()
