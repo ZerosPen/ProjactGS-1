@@ -64,25 +64,28 @@ public class NewPlayerMove : Player
 
     public void onMovement(InputAction.CallbackContext context)
     {
-        movementInput = context.ReadValue<Vector2>();
-        dirX = movementInput.x;
+        if (!UIManager.Instance.isPanelOpen)
+        {
+            movementInput = context.ReadValue<Vector2>();
+            dirX = movementInput.x;
 
-        if (dirX < 0)
-        {
-            _spriteRenderer.flipX = true;
-        }
-        else
-        {
-            _spriteRenderer.flipX = false;
-        }
+            if (dirX < 0)
+            {
+                _spriteRenderer.flipX = true;
+            }
+            else
+            {
+                _spriteRenderer.flipX = false;
+            }
 
-        if (dirX > 0 || dirX < 0)
-        {
-            _animator.SetBool("isWalking", true);
-        }
-        else
-        {
-            _animator.SetBool("isWalking", false);
+            if (dirX > 0 || dirX < 0)
+            {
+                _animator.SetBool("isWalking", true);
+            }
+            else
+            {
+                _animator.SetBool("isWalking", false);
+            }
         }
 
         Debug.Log(movementInput);
@@ -90,7 +93,7 @@ public class NewPlayerMove : Player
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !UIManager.Instance.isPanelOpen)
         {
             isDashing = true;
             rb.AddForce(Vector2.right * movementInput * powerDash);
@@ -100,7 +103,7 @@ public class NewPlayerMove : Player
 
     public void onJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && !UIManager.Instance.isPanelOpen)
         {
             if (canJump)
             {

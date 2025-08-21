@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+
 
 public class EnemyMovement : Enemy
 {
@@ -57,6 +56,7 @@ public class EnemyMovement : Enemy
 
         if (distance < 0.1f)
         {
+            if (UIManager.Instance.isPanelOpen) return;
             StopMove();
             StartCoroutine(RestRoaming());
             return;
@@ -84,6 +84,7 @@ public class EnemyMovement : Enemy
 
     public void OnChasePlayer(Vector2 playerPos)
     {
+        if (UIManager.Instance.isPanelOpen) return;
         moveToTarget(playerPos);
     }
 
