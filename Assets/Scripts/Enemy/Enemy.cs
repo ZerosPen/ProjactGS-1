@@ -7,13 +7,9 @@ public class Enemy : Entity, Idamagetable
 {
     [Header("Status")]
     public float maxHealthPoint;
-    public bool isRoaming;
-    public bool isChasing;
-    public bool canJump;
 
     [Header("References")]
     public GameObject PlayerPos;
-    public GameObject FireballPos;
     public Slider healthBar;
     private FloatingStatus statusBar;
     public float healthPoint { get; set; }
@@ -38,7 +34,6 @@ public class Enemy : Entity, Idamagetable
     public void Update ()
     {
         healthBar.value = healthPoint / maxHealthPoint;
-        distancePlayer = (transform.position.x - PlayerPos.transform.position.x);
-        //distanceTarget = (transform.position.x - FireballPos.transform.position.x);
+        distancePlayer = Mathf.Abs((transform.position.x - PlayerPos.transform.position.x));
     }
 }

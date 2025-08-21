@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class EnemyMovement : Enemy
 {
@@ -9,7 +11,13 @@ public class EnemyMovement : Enemy
     public float speedMovement;
     public float maxSpeedMovement;
     public int Run;
-    public float distanceWaypoint;
+
+    [Header("Status")]
+    public bool isRoaming;
+    public bool isChasing;
+    public bool canJump;
+    private bool isResting;
+    private int currentTargetIndex;
 
     /*    [Header("Dash")]
         private bool canDash = true;
@@ -38,35 +46,45 @@ public class EnemyMovement : Enemy
     {
         rb = GetComponent<Rigidbody2D>();
         tr = GetComponent<TrailRenderer>();
+        SetNewTargetPos();
     }
 
-    public void moveToPosX(Vector2 targetPos)
+    public void moveToTarget(Vector2 targetPos)
     {
-        if (Mathf.Abs(rb.velocity.x) < maxSpeedMovement)
+        if (isResting) return;
+
+        float distance = Mathf.Abs(targetPosition.x - transform.position.x);
+
+        if (distance < 0.1f)
         {
-            if (isRoaming)
-            {
-                moveTowardX(targetPos);
-                if (Vector2.Distance(transform.position, targetPos) < 0.1f)
-                {
-                    StopMove();
-                    StartCoroutine(RestRoaming());
-                }
-
-            }
-            else if (isChasing)
-            {
-                moveTowardX(targetPos);
-            }
+            StopMove();
+            StartCoroutine(RestRoaming());
+            return;
         }
+
+        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speedMovement * Time.deltaTime);
     }
 
-    public void moveTowardX(Vector2 targetPos)
+    public void SetNewTargetPos()
     {
-        Vector2 currPos = rb.position;
-        Vector2 posX = new Vector2(targetPos.x, currPos.y);
-        Vector2 newTarget = Vector2.MoveTowards(rb.position, posX, speedMovement * Time.deltaTime);
-        rb.MovePosition(newTarget);
+        if (WayPoints.Length < 2) return;
+
+        float randomX;
+        float minDistance = 1.5f; // how far the new target must be from current pos
+
+        // keep trying until we find a target that's far enough
+        do
+        {
+            randomX = Random.Range(WayPoints[0].position.x, WayPoints[1].position.x);
+        }
+        while (Mathf.Abs(randomX - transform.position.x) < minDistance);
+
+        targetPosition = new Vector2(randomX, transform.position.y);
+    }
+
+    public void OnChasePlayer(Vector2 playerPos)
+    {
+        moveToTarget(playerPos);
     }
 
     public void Jump ()
@@ -80,29 +98,25 @@ public class EnemyMovement : Enemy
     public void StopMove()
     {
         rb.velocity = Vector2.zero;
+        rb.Sleep();
     }
 
-    public void SetNewTargetPos()
+    public void OnPatrol()
     {
-        if (WayPoints.Length < 2) return;
-
-        int randomIndex1 = Random.Range(0, WayPoints.Length - 1);
-        int randomIndex2 = 1 + randomIndex1;
-
-        Transform pointA = WayPoints[randomIndex1];
-        Transform pointB = WayPoints[randomIndex2];
-
-        float minX = Mathf.Min(pointA.position.x, pointB.position.x);
-        float maxX = Mathf.Max(pointA.position.x, pointB.position.x);
-
-        float randomX = Random.Range(minX, maxX);
-        targetPosition = new Vector2(randomX, transform.position.y);
+        moveToTarget(targetPosition);
     }
 
     IEnumerator RestRoaming()
     {
-        yield return new WaitForSeconds(1f);
+        if (isResting) yield break; // don't start again
+
+        isResting = true;
+        Debug.Log("IEnumerator get call");
+
+        yield return new WaitForSeconds(3f);
+
         SetNewTargetPos();
+        isResting = false;
     }
 
     IEnumerator CoolDownDodge()

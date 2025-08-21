@@ -17,6 +17,6 @@ public class Roaming : State
     // Update is called once per frame
     void Update()
     {
-        enemyMovement.moveToPosX(enemyMovement.targetPosition);
+       enemyMovement.OnPatrol();
     }
 }

@@ -6,17 +6,20 @@ public class CheckDistanceClose : Condition
 {
     [Header("Status & Details")]
     public float distance;
-    private Enemy enemyScript;
+    [SerializeField] private  Enemy enemyScript;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
         enemyScript = GetComponent<Enemy>();
+        if (enemyScript == null)
+        {
+            Debug.LogError("Enemy script not found on " + gameObject.name);
+        }
     }
 
     public override bool checkCondition()
     {
-        if (Mathf.Abs(enemyScript.distancePlayer) <= distance)
+        if (enemyScript.distancePlayer <= distance)
         {
             return true;
         }

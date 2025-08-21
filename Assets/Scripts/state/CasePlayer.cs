@@ -17,8 +17,8 @@ public class CasePlayer : State
     // Update is called once per frame
     void Update()
     {
-        enemyScript.isRoaming = enemyMovement.isRoaming = false;
-        enemyScript.isChasing = enemyMovement.isChasing = true;
-        enemyMovement.moveToPosX(playerPos.transform.position);
+        enemyMovement.isRoaming = enemyMovement.isRoaming = false;
+        enemyMovement.isChasing = enemyMovement.isChasing = true;
+        enemyMovement.OnChasePlayer(playerPos.transform.position);
     }
 }

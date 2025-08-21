@@ -11,6 +11,7 @@ public class NewPlayerMove : Player
     private Rigidbody2D rb;
     public float speed;
     private TrailRenderer tr;
+    [SerializeField] private float dirX;
 
 
     [Header("Dash")]
@@ -22,27 +23,41 @@ public class NewPlayerMove : Player
 
     [Header("Jump")]
     [SerializeField] private bool isJumping;
-    [SerializeField] private bool canJump;   
+    [SerializeField] private bool canJump;
+    private bool isFalling;
     public float jumpForce;
     public Transform groundCheck;
     public float radiusGroundCheck;
     public LayerMask groundMask;
     [SerializeField] private bool isGroundCheck;
 
+    private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         tr = GetComponent<TrailRenderer>();
+        _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        rb.velocity = new Vector2 (movementInput.x * speed, rb.velocity.y);
+        rb.velocity = new Vector2(movementInput.x * speed, rb.velocity.y);
         isGroundCheck = Physics2D.OverlapCircle(groundCheck.position, radiusGroundCheck, groundMask);
+
+        isFalling = rb.velocity.y < 0;
 
         if (isGroundCheck)
         {
             canJump = true;
+            _animator.SetBool("isFalling", false);
+        }
+
+        if (isFalling)
+        {
+            _animator.SetBool("isFalling", isFalling);
         }
 
     }
@@ -50,6 +65,26 @@ public class NewPlayerMove : Player
     public void onMovement(InputAction.CallbackContext context)
     {
         movementInput = context.ReadValue<Vector2>();
+        dirX = movementInput.x;
+
+        if (dirX < 0)
+        {
+            _spriteRenderer.flipX = true;
+        }
+        else
+        {
+            _spriteRenderer.flipX = false;
+        }
+
+        if (dirX > 0 || dirX < 0)
+        {
+            _animator.SetBool("isWalking", true);
+        }
+        else
+        {
+            _animator.SetBool("isWalking", false);
+        }
+
         Debug.Log(movementInput);
     }
 
@@ -70,6 +105,7 @@ public class NewPlayerMove : Player
             if (canJump)
             {
                 canJump = false;
+                _animator.SetTrigger("isJumping");
                 rb.AddForce(Vector2.up * jumpForce);
             }
         }

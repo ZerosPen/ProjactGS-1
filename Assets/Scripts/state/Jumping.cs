@@ -15,6 +15,6 @@ public class Jumping : State
     // Update is called once per frame
     void Update()
     {
-        enemyMovement.moveToPosX(Object.transform.position);
+        enemyMovement.moveToTarget(Object.transform.position);
     }
 }
