@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerCombat : Player
+public class PlayerCombat : MonoBehaviour
 {
     [Header("Status")]
     private List<GameObject> fireballContainer = new List<GameObject>();

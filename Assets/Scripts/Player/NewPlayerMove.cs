@@ -5,7 +5,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NewPlayerMove : Player
+public class NewPlayerMove : MonoBehaviour
 {
     public Vector2 movementInput;
     private Rigidbody2D rb;

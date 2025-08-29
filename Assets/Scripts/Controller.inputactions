@@ -118,6 +118,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Intreact",
+            "id": "f100bfc6-dd52-46be-bd23-50414416195d",
+            "actions": [
+                {
+                    "name": "Intreact",
+                    "type": "Button",
+                    "id": "cdfcb385-34cb-42ce-b820-779039af8158",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a7fdef8d-4e74-489c-891d-d8d8cf672955",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyBoard & mosue",
+                    "action": "Intreact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

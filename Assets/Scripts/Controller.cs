@@ -140,6 +140,34 @@ public partial class @Controller: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Intreact"",
+            ""id"": ""f100bfc6-dd52-46be-bd23-50414416195d"",
+            ""actions"": [
+                {
+                    ""name"": ""Intreact"",
+                    ""type"": ""Button"",
+                    ""id"": ""cdfcb385-34cb-42ce-b820-779039af8158"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a7fdef8d-4e74-489c-891d-d8d8cf672955"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KeyBoard & mosue"",
+                    ""action"": ""Intreact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -180,12 +208,16 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         // Attack
         m_Attack = asset.FindActionMap("Attack", throwIfNotFound: true);
         m_Attack_FireBall = m_Attack.FindAction("FireBall", throwIfNotFound: true);
+        // Intreact
+        m_Intreact = asset.FindActionMap("Intreact", throwIfNotFound: true);
+        m_Intreact_Intreact = m_Intreact.FindAction("Intreact", throwIfNotFound: true);
     }
 
     ~@Controller()
     {
         UnityEngine.Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, Controller.Movement.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Attack.enabled, "This will cause a leak and performance issues, Controller.Attack.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Intreact.enabled, "This will cause a leak and performance issues, Controller.Intreact.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -351,6 +383,52 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         }
     }
     public AttackActions @Attack => new AttackActions(this);
+
+    // Intreact
+    private readonly InputActionMap m_Intreact;
+    private List<IIntreactActions> m_IntreactActionsCallbackInterfaces = new List<IIntreactActions>();
+    private readonly InputAction m_Intreact_Intreact;
+    public struct IntreactActions
+    {
+        private @Controller m_Wrapper;
+        public IntreactActions(@Controller wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Intreact => m_Wrapper.m_Intreact_Intreact;
+        public InputActionMap Get() { return m_Wrapper.m_Intreact; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(IntreactActions set) { return set.Get(); }
+        public void AddCallbacks(IIntreactActions instance)
+        {
+            if (instance == null || m_Wrapper.m_IntreactActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_IntreactActionsCallbackInterfaces.Add(instance);
+            @Intreact.started += instance.OnIntreact;
+            @Intreact.performed += instance.OnIntreact;
+            @Intreact.canceled += instance.OnIntreact;
+        }
+
+        private void UnregisterCallbacks(IIntreactActions instance)
+        {
+            @Intreact.started -= instance.OnIntreact;
+            @Intreact.performed -= instance.OnIntreact;
+            @Intreact.canceled -= instance.OnIntreact;
+        }
+
+        public void RemoveCallbacks(IIntreactActions instance)
+        {
+            if (m_Wrapper.m_IntreactActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IIntreactActions instance)
+        {
+            foreach (var item in m_Wrapper.m_IntreactActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_IntreactActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public IntreactActions @Intreact => new IntreactActions(this);
     private int m_GamePadSchemeIndex = -1;
     public InputControlScheme GamePadScheme
     {
@@ -378,5 +456,9 @@ public partial class @Controller: IInputActionCollection2, IDisposable
     public interface IAttackActions
     {
         void OnFireBall(InputAction.CallbackContext context);
+    }
+    public interface IIntreactActions
+    {
+        void OnIntreact(InputAction.CallbackContext context);
     }
 }
