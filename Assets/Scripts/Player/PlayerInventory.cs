@@ -1,26 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class PlayerItems
 {
     public string itemID;
-    public int Qtyitems;
+    public int qtyItems;
 
     public PlayerItems(string itemID, int qty)
     {
         this.itemID = itemID;
-        this.Qtyitems = qty;
+        this.qtyItems = qty;
     }
 }
 
-public class PlayerInventory : MonoBehaviour
+public class PlayerInventory : MonoBehaviour, IDataPersistence
 {
     [SerializeField] List<PlayerItems> invetoryList = new List<PlayerItems>();
 
     public static PlayerInventory Instance;
+
+    public UnityEvent inventoryUpdate;
 
     private void Awake()
     {
@@ -28,7 +30,6 @@ public class PlayerInventory : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -37,11 +38,15 @@ public class PlayerInventory : MonoBehaviour
         PlayerItems item = FindItemByID(nameID);
         if (item != null)
         {
-            item.Qtyitems += qtyItems;
+            item.qtyItems += qtyItems;
             return;
         }
-        item = new PlayerItems(nameID, qtyItems);
-        invetoryList.Add(item);
+        else
+        {
+            item = new PlayerItems(nameID, qtyItems);
+            invetoryList.Add(item);
+        }
+        inventoryUpdate.Invoke();
     }
 
     public void RemoveItems(string nameID, int qtyItems) 
@@ -49,17 +54,51 @@ public class PlayerInventory : MonoBehaviour
         PlayerItems item = FindItemByID(nameID);
         if (item != null)
         {
-            if (item.Qtyitems > qtyItems)
+            if (item.qtyItems > qtyItems)
             {
-                item.Qtyitems -= qtyItems;
+                item.qtyItems -= qtyItems;
                 return;
             }
         }
-        invetoryList.Remove(item);
+        else
+        {
+            invetoryList.Remove(item);
+        }
+        inventoryUpdate.Invoke();
     }
 
-    PlayerItems FindItemByID(string nameID)
+    public List<PlayerItems> GetInventoryItemsList()
+    {
+        return invetoryList;
+    }
+
+    public PlayerItems FindItemByID(string nameID)
     {
         return invetoryList.Find(item => item.itemID == nameID);
     }
+
+    public void LoadData(GameData data)
+    {
+        // Clear old data so we don't duplicate
+        invetoryList.Clear();
+
+        // Load from saved data
+        foreach (var savedItem in data.inventoryItems)
+        {
+            invetoryList.Add(new PlayerItems(savedItem.itemID, savedItem.qtyItems));
+        }
+    }
+
+    public void SaveData(ref GameData data)
+    {
+        // Clear old data so we don't duplicate
+        data.inventoryItems.Clear();
+
+        // Save current inventory into GameData
+        foreach (var item in invetoryList)
+        {
+            data.inventoryItems.Add(new PlayerItems(item.itemID, item.qtyItems));
+        }
+    }
+
 }

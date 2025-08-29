@@ -112,7 +112,6 @@ public class EnemyMovement : Enemy
         if (isResting) yield break; // don't start again
 
         isResting = true;
-        Debug.Log("IEnumerator get call");
 
         yield return new WaitForSeconds(3f);
 

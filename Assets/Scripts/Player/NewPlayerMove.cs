@@ -87,15 +87,14 @@ public class NewPlayerMove : MonoBehaviour
                 _animator.SetBool("isWalking", false);
             }
         }
-
-        Debug.Log(movementInput);
     }
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.performed && !UIManager.Instance.isPanelOpen)
+        if (context.performed && !UIManager.Instance.isPanelOpen && canDash)
         {
             isDashing = true;
+            canDash = false;
             rb.AddForce(Vector2.right * movementInput * powerDash);
             StartCoroutine(CoolDownDash());
         }
@@ -103,7 +102,7 @@ public class NewPlayerMove : MonoBehaviour
 
     public void onJump(InputAction.CallbackContext context)
     {
-        if (context.performed && !UIManager.Instance.isPanelOpen)
+        if (context.performed && !UIManager.Instance.isPanelOpen && !isDashing)
         {
             if (canJump)
             {
