@@ -85,7 +85,7 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
         // Load from saved data
         foreach (var savedItem in data.inventoryItems)
         {
-            invetoryList.Add(new PlayerItems(savedItem.itemID, savedItem.qtyItems));
+            AddItems(savedItem.itemID, savedItem.qtyItems);
         }
     }
 

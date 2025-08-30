@@ -35,34 +35,37 @@ public class UIManager : MonoBehaviour
     {
         if ((hotbarImg == null && hotbarQtyItem == null) || (hotbarImg.Length == 0 || hotbarQtyItem.Length == 0)) return;
 
-        foreach (var slot in hotbarImg)
+        // Clear all slots first
+        for (int i = 0; i < hotbars.Length; i++)
         {
-            slot.sprite = null;
-            slot.enabled = false;
-        }
+            hotbarImg[i].sprite = null;
+            hotbarImg[i].enabled = false;
 
-        foreach (var slot in hotbarQtyItem)
-        {
-            slot.text = "";
-            slot.enabled = false;
+            hotbarQtyItem[i].text = "";
+            hotbarQtyItem[i].enabled = false;
         }
 
         //Fill the hotbar with the player item
         List<PlayerItems> inventory = PlayerInventory.Instance.GetInventoryItemsList();
+        int count = Mathf.Min(hotbars.Length, inventory.Count);
 
-        for (int i = 0; i < hotbars.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             PlayerItems item = inventory[i];
+
             if (item == null) continue;
 
             ItemsSO data = itemDataBase.GetItemByID(item.itemID);
+            if (data == null) continue;
 
-            // TODO: Replace with your own item icon lookup
             Sprite itemSprite = data.spriteImage;
             int qty = item.qtyItems;
 
             hotbarImg[i].sprite = itemSprite;
+            hotbarImg[i].enabled = true;
             hotbarQtyItem[i].text = qty.ToString();
+            hotbarQtyItem[i].enabled = true;      //  re-enable
+            Debug.Log($"Hotbar {i}: {item.itemID} x{qty}");
         }
     }
 
@@ -102,7 +105,11 @@ public class UIManager : MonoBehaviour
             // Take children in hierarchy order
             Transform child = hotbarUI.GetChild(i);
             hotbars[i] = child.gameObject; // Store child GameObject
-            hotbarImg[i] = hotbars[i].GetComponent<Image>();
+
+            Transform itemImg = hotbars[i].transform.Find("ImageHotbar");
+            if (itemImg != null)
+                hotbarImg[i] = itemImg.GetComponent<Image>();
+
             hotbarQtyItem[i] = hotbars[i].GetComponentInChildren<TextMeshProUGUI>();
         }
     }
