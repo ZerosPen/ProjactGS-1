@@ -22,8 +22,6 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
 
     public static PlayerInventory Instance;
 
-    public UnityEvent inventoryUpdate;
-
     private void Awake()
     {
         if (Instance != null) Destroy(gameObject);
@@ -46,7 +44,7 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
             item = new PlayerItems(nameID, qtyItems);
             invetoryList.Add(item);
         }
-        inventoryUpdate.Invoke();
+        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
     }
 
     public void RemoveItems(string nameID, int qtyItems) 
@@ -64,7 +62,7 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
         {
             invetoryList.Remove(item);
         }
-        inventoryUpdate.Invoke();
+        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
     }
 
     public List<PlayerItems> GetInventoryItemsList()
@@ -82,11 +80,14 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
         // Clear old data so we don't duplicate
         invetoryList.Clear();
 
-        // Load from saved data
+        // Load from saved data directly
         foreach (var savedItem in data.inventoryItems)
         {
-            AddItems(savedItem.itemID, savedItem.qtyItems);
+            invetoryList.Add(new PlayerItems(savedItem.itemID, savedItem.qtyItems));
         }
+
+        // Trigger UI refresh ONCE after everything is loaded
+        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
     }
 
     public void SaveData(ref GameData data)

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -31,7 +30,7 @@ public class UIManager : MonoBehaviour
         UpdateHotbarInvetroy();
     }
 
-    public void UpdateHotbarInvetroy()
+    public void UpdateHotbarInvetroy(object param = null)
     {
         if ((hotbarImg == null && hotbarQtyItem == null) || (hotbarImg.Length == 0 || hotbarQtyItem.Length == 0)) return;
 
@@ -73,16 +72,14 @@ public class UIManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnloadedScene;
 
-        if (PlayerInventory.Instance != null)
-            PlayerInventory.Instance.inventoryUpdate.AddListener(UpdateHotbarInvetroy);
+        EventBus.RegisterEvent("UpdateInventoryUI", UpdateHotbarInvetroy);
     }
 
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnloadedScene;
 
-        if (PlayerInventory.Instance != null)
-            PlayerInventory.Instance.inventoryUpdate.RemoveListener(UpdateHotbarInvetroy);
+        EventBus.DeRegisterEvent("UpdateInventoryUI", UpdateHotbarInvetroy);
     }
 
     private void OnloadedScene(Scene scene, LoadSceneMode mode)
