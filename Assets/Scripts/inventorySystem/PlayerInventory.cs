@@ -44,7 +44,8 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
             item = new PlayerItems(nameID, qtyItems);
             invetoryList.Add(item);
         }
-        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
+        EventBus.OnTriggerEvent("UpdateHotbarUI", invetoryList);
+        EventBus.OnTriggerEvent("UpdateInventory", invetoryList);
     }
 
     public void RemoveItems(string nameID, int qtyItems) 
@@ -62,7 +63,8 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
         {
             invetoryList.Remove(item);
         }
-        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
+        EventBus.OnTriggerEvent("UpdateHotbarUI", invetoryList);
+        EventBus.OnTriggerEvent("UpdateInventory", invetoryList);
     }
 
     public List<PlayerItems> GetInventoryItemsList()
@@ -87,7 +89,8 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
         }
 
         // Trigger UI refresh ONCE after everything is loaded
-        EventBus.OnTriggerEvent("UpdateInventoryUI", invetoryList);
+        EventBus.OnTriggerEvent("UpdateHotbarUI", invetoryList); 
+        EventBus.OnTriggerEvent("UpdateInventory", invetoryList);
     }
 
     public void SaveData(ref GameData data)

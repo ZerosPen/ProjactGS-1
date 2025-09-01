@@ -27,6 +27,11 @@ public class Player : Entity, Idamagetable
         }
     }
 
+    public void OpenInventory()
+    {
+
+    }
+
     // Update is called once per frame
     void Update()
     {

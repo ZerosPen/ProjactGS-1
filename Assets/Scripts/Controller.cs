@@ -153,6 +153,15 @@ public partial class @Controller: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Inventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""19089955-4566-4340-8556-1d1567b20cd3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -164,6 +173,17 @@ public partial class @Controller: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";KeyBoard & mosue"",
                     ""action"": ""Intreact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1cac074-e907-444f-8214-7b728416348b"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";KeyBoard & mosue"",
+                    ""action"": ""Inventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -211,6 +231,7 @@ public partial class @Controller: IInputActionCollection2, IDisposable
         // Intreact
         m_Intreact = asset.FindActionMap("Intreact", throwIfNotFound: true);
         m_Intreact_Intreact = m_Intreact.FindAction("Intreact", throwIfNotFound: true);
+        m_Intreact_Inventory = m_Intreact.FindAction("Inventory", throwIfNotFound: true);
     }
 
     ~@Controller()
@@ -388,11 +409,13 @@ public partial class @Controller: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Intreact;
     private List<IIntreactActions> m_IntreactActionsCallbackInterfaces = new List<IIntreactActions>();
     private readonly InputAction m_Intreact_Intreact;
+    private readonly InputAction m_Intreact_Inventory;
     public struct IntreactActions
     {
         private @Controller m_Wrapper;
         public IntreactActions(@Controller wrapper) { m_Wrapper = wrapper; }
         public InputAction @Intreact => m_Wrapper.m_Intreact_Intreact;
+        public InputAction @Inventory => m_Wrapper.m_Intreact_Inventory;
         public InputActionMap Get() { return m_Wrapper.m_Intreact; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -405,6 +428,9 @@ public partial class @Controller: IInputActionCollection2, IDisposable
             @Intreact.started += instance.OnIntreact;
             @Intreact.performed += instance.OnIntreact;
             @Intreact.canceled += instance.OnIntreact;
+            @Inventory.started += instance.OnInventory;
+            @Inventory.performed += instance.OnInventory;
+            @Inventory.canceled += instance.OnInventory;
         }
 
         private void UnregisterCallbacks(IIntreactActions instance)
@@ -412,6 +438,9 @@ public partial class @Controller: IInputActionCollection2, IDisposable
             @Intreact.started -= instance.OnIntreact;
             @Intreact.performed -= instance.OnIntreact;
             @Intreact.canceled -= instance.OnIntreact;
+            @Inventory.started -= instance.OnInventory;
+            @Inventory.performed -= instance.OnInventory;
+            @Inventory.canceled -= instance.OnInventory;
         }
 
         public void RemoveCallbacks(IIntreactActions instance)
@@ -460,5 +489,6 @@ public partial class @Controller: IInputActionCollection2, IDisposable
     public interface IIntreactActions
     {
         void OnIntreact(InputAction.CallbackContext context);
+        void OnInventory(InputAction.CallbackContext context);
     }
 }
