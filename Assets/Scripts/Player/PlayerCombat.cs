@@ -10,15 +10,15 @@ public class PlayerCombat : MonoBehaviour
     private GameObject activeChargeVFX;
     public float coolDownTime;
     private float currCoolDown;
-    private float lastDirection = 1;
-    public KeyCode attackKey = KeyCode.R;
+    private Vector2 _direction;
+    private float lastDirection;
 
     public GameObject fireBallPrefabs;
-    private NewPlayerMove movement;
+    private PlayerInput movement;
 
     private void Start()
     {
-        movement = GetComponent<NewPlayerMove>();
+        movement = GetComponent<PlayerInput>();
 
         if (fireBallPrefabs == null)
             Debug.LogError("FireBall prefab not assigned!");
@@ -29,17 +29,20 @@ public class PlayerCombat : MonoBehaviour
 
     private void Update()
     {
-        if (movement.movementInput.x != 0)
+        _direction = movement.GetDirection();
+        if (_direction.x > 0)
         {
-            lastDirection = movement.movementInput.x;
+            lastDirection = 1;
         }
-
-        if (currCoolDown > 0)
+        else if (_direction.x < 0)
         {
-            currCoolDown -= Time.deltaTime;
+            lastDirection = -1;
         }
+    }
 
-        if (Input.GetKey(attackKey) && currCoolDown <= 0)
+    public void FireBalls(InputAction.CallbackContext contex)
+    {
+        if (contex.started)
         {
             if (activeChargeVFX == null)
             {
@@ -47,10 +50,7 @@ public class PlayerCombat : MonoBehaviour
                 activeChargeVFX.transform.SetParent(transform);
             }
         }
-    }
 
-    public void FireBalls(InputAction.CallbackContext contex)
-    {
         if (contex.canceled && currCoolDown <= 0)
         {
             if (activeChargeVFX != null)

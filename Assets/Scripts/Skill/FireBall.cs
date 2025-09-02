@@ -8,7 +8,7 @@ public class FireBall : MonoBehaviour
     [Header("Status skills")]
     public float damage;
     public float speed;
-    public float direction;
+    public float direction = 1;
     public GameObject explosionVFX;
     private GameObject explosionActive;
 

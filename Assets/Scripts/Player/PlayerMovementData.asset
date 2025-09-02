@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9553ed4e10354bf49a0bf2225e2fe3b6, type: 3}
+  m_Name: PlayerMovementData
+  m_EditorClassIdentifier: 
+  WalkMovement: 10
+  smootherLerp: 6
+  accelrationMovement: 30
+  MaxSpeedMovement: 20
+  canJump: 1
+  JumpHeight: 3
+  CountJump: 0
+  MaxJumpCount: 2
+  GravityScale: 6
+  FallingGravityMultiplier: 2
+  MaxVelocity: 0
+  canDash: 1
+  isDashing: 0
+  isRecharging: 1
+  DashPower: 50
+  MaxDashCount: 2
+  CountDash: 2
+  CoolDownDash: 0.5
+  TimeDash: 0.2
