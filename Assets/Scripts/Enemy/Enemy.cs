@@ -14,7 +14,7 @@ public class Enemy : Entity, Idamagetable
     private FloatingStatus statusBar;
     public float healthPoint { get; set; }
     public float distancePlayer;
-    public float distanceTarget;
+    public Vector2 distanceTarget;
 
     private void Start()
     {
@@ -34,6 +34,7 @@ public class Enemy : Entity, Idamagetable
     public void Update ()
     {
         healthBar.value = healthPoint / maxHealthPoint;
-        distancePlayer = Mathf.Abs((transform.position.x - PlayerPos.transform.position.x));
+        distancePlayer = Vector2.Distance(transform.position, PlayerPos.transform.position);
+        Debug.Log("Distance to Player: " + distancePlayer);
     }
 }

@@ -1,50 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-
 
 public class EnemyMovement : Enemy
 {
-    [Header("Movement")]
-    public float speedMovement;
-    public float maxSpeedMovement;
-    public int Run;
-
-    [Header("Status")]
-    public bool isRoaming;
-    public bool isChasing;
-    public bool canJump;
     private bool isResting;
-    private int currentTargetIndex;
-
-    /*    [Header("Dash")]
-        private bool canDash = true;
-        private bool isDashing;
-        public float dashForce;
-        private float dashTime = 0.2f;
-        private float coolDownDash = 1f;*/
-
-    [Header("Jump")]
-    private bool isJumping;
-    public float jumpForce;
-    public Transform groundCheck;
-    public float radiusGroundCheck;
-    public LayerMask groundMask;
-    private float coolDownDodge = 1f;
+    public CharacterDataSO characterData { get; private set; }
 
     [Header("Waypoints")]
     public Transform[] WayPoints;
     public Vector2 targetPosition;
+    public float distance;
 
     private Rigidbody2D rb;
     private TrailRenderer tr;
+    private MovementCharacter _movementCharacter;
     private bool isGroundCheck;
+
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         tr = GetComponent<TrailRenderer>();
+        _movementCharacter = GetComponent<MovementCharacter>();
         SetNewTargetPos();
     }
 
@@ -52,17 +29,18 @@ public class EnemyMovement : Enemy
     {
         if (isResting) return;
 
-        float distance = Mathf.Abs(targetPosition.x - transform.position.x);
+        distance = Mathf.Abs(targetPos.x - transform.position.x);
 
         if (distance < 0.1f)
         {
-            if (UIManager.Instance.isPanelOpen) return;
-            StopMove();
+            StopMoving();
             StartCoroutine(RestRoaming());
             return;
         }
+        // get direction (-1 for left, +1 for right)
+        float direction = Mathf.Sign(targetPos.x - transform.position.x);
 
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speedMovement * Time.deltaTime);
+        _movementCharacter.OnWalking(direction);
     }
 
     public void SetNewTargetPos()
@@ -84,22 +62,12 @@ public class EnemyMovement : Enemy
 
     public void OnChasePlayer(Vector2 playerPos)
     {
-        if (UIManager.Instance.isPanelOpen) return;
         moveToTarget(playerPos);
     }
 
-    public void Jump ()
-    {
-        if (isGroundCheck && canJump)
-        {
-            rb.AddForce(Vector2.up * jumpForce);
-        }
-    }
-
-    public void StopMove()
+    public void StopMoving()
     {
         rb.velocity = Vector2.zero;
-        rb.Sleep();
     }
 
     public void OnPatrol()
@@ -107,22 +75,18 @@ public class EnemyMovement : Enemy
         moveToTarget(targetPosition);
     }
 
-    IEnumerator RestRoaming()
+    public IEnumerator RestRoaming()
     {
-        if (isResting) yield break; // don't start again
+        if (isResting) yield break;
 
         isResting = true;
+        Debug.Log("Enemy is resting...");
 
         yield return new WaitForSeconds(3f);
 
-        SetNewTargetPos();
         isResting = false;
+        SetNewTargetPos();
     }
 
-    IEnumerator CoolDownDodge()
-    {
-        canJump = false;
-        yield return new WaitForSeconds(coolDownDodge);
-        canJump = true;
-    }
+    public bool IsResting => isResting;
 }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9553ed4e10354bf49a0bf2225e2fe3b6, type: 3}
+  m_Name: EnemyData
+  m_EditorClassIdentifier: 
+  WalkMovement: 5
+  smootherLerp: 6
+  accelrationMovement: 25
+  MaxSpeedMovement: 10
+  canJump: 0
+  JumpHeight: 0
+  CountJump: 0
+  MaxJumpCount: 0
+  GravityScale: 0
+  FallingGravityMultiplier: 0
+  MaxVelocity: 0
+  canDash: 0
+  isDashing: 0
+  isRecharging: 0
+  DashPower: 0
+  MaxDashCount: 0
+  CountDash: 0
+  CoolDownDash: 0
+  TimeDash: 0
