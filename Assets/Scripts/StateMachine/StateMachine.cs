@@ -19,14 +19,18 @@ public class StateMachine : MonoBehaviour
 
     private void Update()
     {
-        /*for (int i = 0; i < entries.Count; i++)
+        for (int i = 0; i < entries.Count; i++)
         {
             if (entries[i].condition.checkCondition())
             {
-                SwitchState(entries[i].state);
+                entries[i].state.enabled = true;
             }
-        }*/
-        StateEntry bestEntry = null;
+            else
+            {
+                entries[i].state.enabled = false;
+            }
+        }
+        /*StateEntry bestEntry = null;
 
         foreach (var entry in entries)
         {
@@ -42,10 +46,10 @@ public class StateMachine : MonoBehaviour
         if (bestEntry != null)
         {
             SwitchState(bestEntry.state);
-        }
+        }*/
     }
 
-    private void SwitchState(State newstate)
+    /*private void SwitchState(State newstate)
     {
        if (currstate == newstate) return;
 
@@ -54,5 +58,5 @@ public class StateMachine : MonoBehaviour
 
        newstate.enabled = true;
        currstate = newstate;
-    }
+    }*/
 }

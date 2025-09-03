@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+/* <summary>
+    Represents an item in the player's inventory with an ID and quantity.
+    </summary>*/
 [System.Serializable]
 public class PlayerItems
 {
@@ -16,9 +19,15 @@ public class PlayerItems
     }
 }
 
+/*<summary>
+     Manages the player's inventory, allowing adding, removing, saving, and loading items.
+     Implements IDataPersistence for saving/loading game data.
+</summary>*/
 public class PlayerInventory : MonoBehaviour, IDataPersistence
 {
     [SerializeField] List<PlayerItems> invetoryList = new List<PlayerItems>();
+    public ItemsDataBase itemdatabase;
+    private int count;
 
     public static PlayerInventory Instance;
 
@@ -34,16 +43,39 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
     public void AddItems(string nameID, int qtyItems)
     {
         PlayerItems item = FindItemByID(nameID);
-        if (item != null)
+        ItemsSO data = itemdatabase.GetItemByID(nameID);
+        int maxStack = Mathf.Max(1, data.MaxStack);
+
+        //Check all item in PlayerItems that can stackAble and Try to add to existing stacks that are not full
+        foreach (var stack in invetoryList)
         {
-            item.qtyItems += qtyItems;
-            return;
+            if (stack.itemID == nameID && stack.qtyItems <= maxStack)
+            {
+                // Calculate how much space is left in this stack
+                int spaceLeft = maxStack - stack.qtyItems;
+                int addMount = Mathf.Min(spaceLeft, qtyItems);
+
+                stack.qtyItems += addMount; 
+                qtyItems -= addMount;
+
+                if (qtyItems <= 0) break;
+            }
         }
-        else
+
+        int safety = 1000; // Safety counter to prevent infinite loops
+
+        // Add new stacks if there are still items left to add
+        while (qtyItems > 0 && safety-- > 0)
         {
-            item = new PlayerItems(nameID, qtyItems);
-            invetoryList.Add(item);
+            int addAmount = Mathf.Min(maxStack, qtyItems);
+            if (addAmount <= 0) break; // stop if nothing to add
+
+            PlayerItems newStack = new PlayerItems(nameID, addAmount);
+            invetoryList.Add(newStack);
+
+            qtyItems -= addAmount;
         }
+
         EventBus.OnTriggerEvent("UpdateHotbarUI", invetoryList);
         EventBus.OnTriggerEvent("UpdateInventory", invetoryList);
     }
@@ -51,18 +83,27 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
     public void RemoveItems(string nameID, int qtyItems) 
     {
         PlayerItems item = FindItemByID(nameID);
-        if (item != null)
+
+        // Iterate backwards to safely remove items from the list
+        for (int i = invetoryList.Count - 1; i >= 0 && qtyItems > 0; i--)
         {
-            if (item.qtyItems > qtyItems)
+            if (invetoryList[i].itemID == nameID)
             {
-                item.qtyItems -= qtyItems;
-                return;
+                if (invetoryList[i].qtyItems > qtyItems)
+                {
+                    // Reduce quantity in this stack
+                    invetoryList[i].qtyItems -= qtyItems;
+                    qtyItems = 0;
+                }
+                else
+                {
+                    // Remove entire stack and reduce qtyItems accordingly
+                    qtyItems -= invetoryList[i].qtyItems;
+                    invetoryList.RemoveAt(i);
+                }
             }
         }
-        else
-        {
-            invetoryList.Remove(item);
-        }
+
         EventBus.OnTriggerEvent("UpdateHotbarUI", invetoryList);
         EventBus.OnTriggerEvent("UpdateInventory", invetoryList);
     }

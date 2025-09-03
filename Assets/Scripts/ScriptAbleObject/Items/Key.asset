@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: Key
   m_EditorClassIdentifier: 
   nameID: Key
+  typeItem: 0
   Desc: This Is blue key
+  MaxStack: 2
   spriteImage: {fileID: 21300000, guid: bd08f039278cd864c869579e1d2aa37c, type: 3}

@@ -35,6 +35,5 @@ public class Enemy : Entity, Idamagetable
     {
         healthBar.value = healthPoint / maxHealthPoint;
         distancePlayer = Vector2.Distance(transform.position, PlayerPos.transform.position);
-        Debug.Log("Distance to Player: " + distancePlayer);
     }
 }

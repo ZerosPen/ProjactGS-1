@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
+/// <summary>
+/// Controls the movement behavior of a character including walking, jumping, and dashing.
+/// Uses Rigidbody2D physics for movement and relies on CharacterDataSO for configuration.
+/// </summary>
 public class MovementCharacter : MonoBehaviour
 {
     public CharacterDataSO CharacterData;
@@ -27,24 +31,30 @@ public class MovementCharacter : MonoBehaviour
         speedFalling = rb.velocity.y;
     }
 
+    /* <summary>
+        Handles horizontal walking movement.
+        Smoothly accelerates or decelerates the character towards the target speed based on input direction.
+        </summary>
+        <param name="dirX">Horizontal input direction (-1 for left, 1 for right, 0 for no input).</param>*/
     public void OnWalking(float dirX)
     {
-        // Target horizontal speedMovement
+        // Calculate target horizontal speed based on input and character walk speed
         float targetSpeed = dirX * CharacterData.WalkMovement;
 
+        // Determine acceleration rate: faster acceleration when stoppin
         float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ?
             CharacterData.accelrationMovement :
             CharacterData.accelrationMovement * 2f;
 
-        // Instead of always lerping from 0, lerp between current velocity and target speedMovement
+        // Smoothly interpolate current velocity towards target speed
         float desiredSpeed = Mathf.Lerp(rb.velocity.x, targetSpeed, CharacterData.smootherLerp * Time.fixedDeltaTime);
 
-        // Calculate difference again after smoothing
+        // Calculate speed difference after smoothing
         float speedDifference = desiredSpeed - rb.velocity.x;
 
         rb.AddForce(Vector2.right * speedDifference * accelRate, ForceMode2D.Force);
 
-        // Clamp velocity to max speedMovement
+        // Clamp horizontal velocity to max speed
         if (Mathf.Abs(rb.velocity.x) > CharacterData.MaxSpeedMovement)
         {
             rb.velocity = new Vector2(
